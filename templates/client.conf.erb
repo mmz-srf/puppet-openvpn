@@ -12,15 +12,22 @@ key <%= @cert %>.key
 <% if @tls_auth_key -%>
 tls-auth <%= @tls_auth_key %> 1
 <% end -%>
+<% if @auth -%>
+auth <%= @auth %>
+<% end -%>
 <% if @openvpn_user -%>
 user  <%= @openvpn_user %>
 <% end -%>
 <% if @openvpn_group -%>
 group <%= @openvpn_group %>
 <% end -%>
+<% if @ns_cert_type -%>
 ns-cert-type <%= @ns_cert_type %>
+<% end -%>
 cipher <%= @cipher %>
-comp-lzo
+<% if @compression -%>
+comp-<%= @compression %>
+<% end -%>
 verb <%= @verb %>
 # custom options
 <% @custom_options.each do |custom_option| -%>

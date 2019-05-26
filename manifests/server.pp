@@ -3,10 +3,12 @@
 # Install and configure the OpenVPN server
 #
 class openvpn::server (
+  $auth                     = 'SHA1',
   $ca                       = 'ca.crt',
   $cert                     = 'server.crt',
   $cipher                   = undef,
   $client_cert_not_required = '',
+  $client_to_client         = false,
   $crl                      = undef,
   $dev                      = 'tun',
   $dev_type                 = '',
@@ -15,6 +17,7 @@ class openvpn::server (
   $domain                   = '',
   $wins                     = '',
   $duplicate_cn             = '',
+  $ifconfig                 = '',
   $key                      = 'server.key',
   $log                      = '',
   $log_append               = '',
@@ -34,16 +37,16 @@ class openvpn::server (
   $client_disconnect        = '',
   $tls_auth                 = false,
   $tls_verify               = '',
+  $topology                 = 'subnet',
   $custom_options           = [],
-  $ccd                      = $openvpn::params::ccd,
-  $openvpn_dir              = $openvpn::params::openvpn_dir,
-  $openvpn_group            = $openvpn::params::openvpn_group,
-  $openvpn_user             = $openvpn::params::openvpn_user,
-) inherits openvpn::params {
+  $ccd                      = 'ccd',
+) {
 
   include openvpn
-
-  $openssl = $openvpn::params::openssl
+  $openvpn_dir   = $::openvpn::openvpn_dir
+  $openvpn_group = $::openvpn::openvpn_group
+  $openvpn_user  = $::openvpn::openvpn_user
+  $openssl       = $::openvpn::openssl
 
   if ( $log_append != '' ) and ( $log != '' ){
     err('Log_append and log should not both be defined')
@@ -73,10 +76,8 @@ class openvpn::server (
   }
 
   if $openvpn::manage_service {
-    Exec["create ${dh}"] ~>
-    Service['openvpn']
+    Exec["create ${dh}"] ~> Service['openvpn']
 
-    File["${openvpn_dir}/openvpn.conf"] ~>
-    Service['openvpn']
+    File["${openvpn_dir}/openvpn.conf"] ~> Service['openvpn']
   }
 }
