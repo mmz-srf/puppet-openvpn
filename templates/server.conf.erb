@@ -18,6 +18,9 @@ ifconfig-pool-persist ipp.txt
 <% else -%>
 mode server
 <% end -%>
+<% if @ifconfig != '' -%>
+ifconfig <%= @ifconfig %>
+<% end -%>
 
 # IPv6 Server
 <% if @server_ipv6 -%>
@@ -36,15 +39,18 @@ crl-verify <%= @crl %>
 # address pool (10.8.0.0/255.255.255.0)
 # back to the OpenVPN server.
 <% Array(@route).each do |r| -%>
-push route <%= r %>
+push "route <%= r %>"
 <% end -%>
 
 <% Array(@route_ipv6).each do |r| -%>
 push "route-ipv6 <%= r %>"
 <% end -%>
-
-topology subnet
-
+<% if @topology != '' -%>
+topology <%= @topology %>
+<% if @topology == "p2p" -%>
+push "topology <%= @topology %>"
+<% end -%>
+<% end -%>
 # To assign specific IP addresses to specific
 # clients or if a connecting client has a private
 # subnet behind it that should also have VPN access,
@@ -119,7 +125,9 @@ push "<%= @redirect_gateway %>"
 push "dhcp-option DNS <%= @dns %>"
 <% end -%>
 
-<% if @domain != '' -%>
+<% if @domain.is_a? Array -%>
+<% @domain.each do |d| -%>push "dhcp-option DOMAIN <%= "#{d}\"\n" %><% end %>
+<% elsif @domain != '' -%>
 push "dhcp-option DOMAIN <%= @domain %>"
 <% end -%>
 
@@ -133,8 +141,11 @@ push "dhcp-option WINS <%= @wins %>"
 # To force clients to only see the server, you
 # will also need to appropriately firewall the
 # server's TUN/TAP interface.
-;client-to-client
 
+;client-to-client
+<% if @client_to_client -%>
+client-to-client
+<% end -%>
 # Uncomment this directive if multiple clients
 # might connect with the same certificate/key
 # files or common names.  This is recommended
@@ -172,6 +183,16 @@ keepalive 10 120
 # on the server and '1' on the clients.
 <% if @tls_auth -%>
 tls-auth ta.key 0 # This file is secret
+<% end -%>
+
+# Authenticate packets with HMAC using message digest algorithm
+# alg.  (The default is SHA1 ).
+# For more information on HMAC see
+#   http://www.cs.ucsd.edu/users/mihir/papers/hmac.html
+# Authenticate packets with HMAC using message digest algorithm
+# To check the available algorithms see: openvpn --show-digests
+<% if @auth -%>
+auth <%= @auth %>
 <% end -%>
 
 # Select a cryptographic cipher.
