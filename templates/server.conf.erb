@@ -208,7 +208,10 @@ cipher <%= @cipher %>
 # Enable compression on the VPN link.
 # If you enable it here, you must also
 # enable it in the client config file.
-comp-lzo
+<% if @compression -%>
+compress <%= @compression %>
+<% end -%>
+
 
 # The maximum number of concurrently connected
 # clients we want to allow.
@@ -273,8 +276,8 @@ client-cert-not-required
 <% end -%>
 
 
-# Tell the server to use the username for indexing 
-# purposes as it would use the Common Name of a client 
+# Tell the server to use the username for indexing
+# purposes as it would use the Common Name of a client
 # which was authenticating via a client certificate.
 <% if @username_as_common_name != '' -%>
 username-as-common-name
@@ -287,19 +290,19 @@ username-as-common-name
 <% if @plugins.is_a? Array -%>
 <% @plugins.each do |p| -%>plugin <%= "#{p}\n" %><% end %>
 <% elsif @plugins != '' -%>
-plugin <%= @plugins %> 
+plugin <%= @plugins %>
 <% end -%>
 
 <% if @script_security != '' -%>
-script-security <%= @script_security %> 
+script-security <%= @script_security %>
 <% end -%>
 
 <% if @client_connect != '' -%>
-client-connect <%= @client_connect %> 
+client-connect <%= @client_connect %>
 <% end -%>
 
 <% if @client_disconnect != '' -%>
-client-disconnect <%= @client_disconnect %> 
+client-disconnect <%= @client_disconnect %>
 <% end -%>
 
 <% if @tls_verify != '' -%>
