@@ -9,6 +9,7 @@ class openvpn::server (
   $cipher                   = undef,
   $client_cert_not_required = '',
   $client_to_client         = false,
+  $compression              = undef,
   $crl                      = undef,
   $dev                      = 'tun',
   $dev_type                 = '',
